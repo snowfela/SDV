@@ -2,12 +2,13 @@ import os
 import sys
 import json
 import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
 from sdv.single_table import CTGANSynthesizer
 from sdv.evaluation.single_table import run_diagnostic, evaluate_quality, get_column_plot, get_column_pair_plot
 from sdv.metadata import SingleTableMetadata
 
 def get_column_plot(real_data, synthetic_data, column_name, metadata):
-    import matplotlib.pyplot as plt
     fig, ax = plt.subplots()
     ax.hist(real_data[column_name], bins=20, alpha=0.5, label='Real Data')
     ax.hist(synthetic_data[column_name], bins=20, alpha=0.5, label='Synthetic Data')
@@ -18,7 +19,6 @@ def get_column_plot(real_data, synthetic_data, column_name, metadata):
     return fig
 
 def get_column_pair_plot(real_data, synthetic_data, column_names, metadata):
-    import matplotlib.pyplot as plt
     fig, ax = plt.subplots()
     ax.scatter(real_data[column_names[0]], real_data[column_names[1]], label='Real Data')
     ax.scatter(synthetic_data[column_names[0]], synthetic_data[column_names[1]], label='Synthetic Data')
@@ -31,12 +31,14 @@ def get_column_pair_plot(real_data, synthetic_data, column_names, metadata):
 def process_csv(input_file_path, output_file_path, sensitive_attributes=None):
     try:
         df = pd.read_csv(input_file_path)
-        # Handle missing values (replace with appropriate values)
-        df.fillna(value={'amenities_fee': 0}, inplace=True)  # Replace NaN with 0
+        # data preprocessing
+        for col in df.select_dtypes(include=[np.number]):  # Iterate numerical columns
+            if df[col].isnull().any():  # Check for missing values
+                df[col].fillna(df[col].mean(), inplace=True) # Impute with mean for numerical columns
+        for col in df.select_dtypes(include=[object]):  # Iterate object columns
+            if df[col].isnull().any():  
+                df.dropna(subset=[col], inplace=True) # drop rows
         df['checkout_date'] = pd.to_datetime(df['checkout_date']).dt.strftime('%Y-%m-%d')  # Convert checkout_date to string format
-        # df = df.dropna(subset=['checkout_date'])
-        # # Convert Timestamp objects to string format
-        # df = df.applymap(lambda x: x.strftime('%Y-%m-%d %H:%M:%S') if isinstance(x, pd.Timestamp) else str(x))
         # Extract metadata
         metadata = SingleTableMetadata()
         metadata.detect_from_dataframe(df)
