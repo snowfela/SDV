@@ -18,7 +18,6 @@ const storage = multer.diskStorage({destination: (req, file, cb) => {
 });
 const upload = multer({ storage: storage });
 app.use(express.static('frontend'));
-// app.use('/results', express.static('backend/results'));
 
 app.post('/upload', upload.single('fileInput'), async (req, res) => {
   if (!req.file) {
@@ -27,7 +26,7 @@ app.post('/upload', upload.single('fileInput'), async (req, res) => {
   const uploadedFilePath = req.file.path;
   // Validate Python script path (optional)
   const pythonScriptPath = path.join(__dirname, 'processing', 'process_data.py');
-  const outputFilePath = path.join(__dirname, 'results', 'generated_csv', 'output.csv');
+  const outputFilePath = path.join(__dirname, '..','frontend','results', 'output.csv');
   console.log('Python Script Path:', pythonScriptPath);
   console.log('Output File Path:', outputFilePath);
   // Spawn Python process with error handling
@@ -46,8 +45,7 @@ app.post('/upload', upload.single('fileInput'), async (req, res) => {
       return res.status(500).json({ error: 'An error occurred while processing the file.' });
     }
 	// Redirect to results page on successful processing
-	return res.redirect('/results.html');
-  });
+  return res.json({ message: 'File uploaded and processed successfully.', resultFile: '/results/output.csv' });  });
 });
 
 app.listen(PORT, () => {

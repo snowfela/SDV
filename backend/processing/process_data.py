@@ -62,9 +62,9 @@ def process_csv(input_file_path, output_file_path, sensitive_attributes=None):
         column_plot = get_column_plot(real_data=df, synthetic_data=synthetic_data, column_name="room_rate", metadata=metadata)
         column_pair_plot = get_column_pair_plot(real_data=df, synthetic_data=synthetic_data, column_names=["checkin_date", "checkout_date"], metadata=metadata)
         # Save graphs to results/generated_graphs folder
-        os.makedirs("backend/results/generated_graphs", exist_ok=True)
-        column_plot.savefig("backend/results/generated_graphs/column_plot.png")
-        column_pair_plot.savefig("backend/results/generated_graphs/column_pair_plot.png")
+        os.makedirs("frontend/results", exist_ok=True)
+        column_plot.savefig("frontend/results/column_plot.png")
+        column_pair_plot.savefig("frontend/results/column_pair_plot.png")
     except Exception as e:
         print({"error": str(e)})
 
