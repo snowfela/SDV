@@ -32,12 +32,17 @@ def process_csv(input_file_path, output_file_path, sensitive_attributes=None):
     try:
         df = pd.read_csv(input_file_path)
         # data preprocessing
-        for col in df.select_dtypes(include=[np.number]):  # Iterate numerical columns
-            if df[col].isnull().any():  # Check for missing values
-                df[col].fillna(df[col].mean(), inplace=True) # Impute with mean for numerical columns
-        for col in df.select_dtypes(include=[object]):  # Iterate object columns
-            if df[col].isnull().any():  
-                df.dropna(subset=[col], inplace=True) # drop rows
+        for col in df.columns:
+            if pd.api.types.is_numeric_dtype(df[col]): # Handle numerical missing values (assuming mean imputation)
+                if df[col].isnull().any():
+                    df[col].fillna(df[col].mean(), inplace=True)
+            elif pd.api.types.is_datetime64_dtype(df[col]): # Handle datetime format (assuming YYYY-MM-DD HH:MM:SS)
+                df[col] = df[col].dt.strftime('%Y-%m-%d %H:%M:%S')
+            else: # Handle missing values in categorical or other object columns
+                if pd.api.types.is_categorical_dtype(df[col]):
+                    df[col].fillna(df[col].mode()[0], inplace=True)  # Impute with mode for categorical data
+                else:
+                    df.dropna(subset=[col], inplace=True)  # Drop rows for other data types
         df['checkout_date'] = pd.to_datetime(df['checkout_date']).dt.strftime('%Y-%m-%d')  # Convert checkout_date to string format
         # Extract metadata
         metadata = SingleTableMetadata()

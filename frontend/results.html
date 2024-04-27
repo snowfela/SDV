@@ -9,11 +9,14 @@
 <body>
   <div class="container">
     <h2>Results</h2>
-    <div id="accuracy">Accuracy: <span id="accuracyValue"></span></div>
-    <div id="speedometer"></div>  <canvas id="speedometerCanvas" width="200" height="200"></canvas>  <div id="downloadLink" style="display: none;">
-      <a id="downloadButton" href="#" download>Download Processed File</a>
+    <div id="downloadLink" style="display: block;">
+      <a id="downloadButton" href="/backend/results/generated_csv/output.csv" download>Download Processed File</a>
     </div>
-    <div id="output"></div>  </div>
-  <script src="script.js"></script>
+  </div>
+  <div id="output">
+    <h2>Plots</h2>
+    <img src="/backend/results/generated_graphs/column_plot.png" alt="Column Plot">
+    <img src="/backend/results/generated_graphs/column_pair_plot.png" alt="Column Pair Plot">
+  </div>
 </body>
 </html>
