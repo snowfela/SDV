@@ -2,6 +2,7 @@ document.addEventListener('DOMContentLoaded', function() {
   const uploadForm = document.getElementById('uploadForm'); 
   const fileInput = document.getElementById('fileInput');
   const messageDiv = document.getElementById('message');
+  const loader = document.getElementById('loader'); // Get loader element
 
   uploadForm.addEventListener('submit', async function(event) {
     event.preventDefault();
@@ -9,8 +10,10 @@ document.addEventListener('DOMContentLoaded', function() {
       showMessage("Please select a file.");
       return;
     }
+
+    loader.style.display = 'block';     // Display loader when upload is in progress
+
     const formData = new FormData(uploadForm);
-    // formData.append('fileInput', fileInput.files[0]);
     try {
       const response = await fetch('/upload', {method: 'POST',body: formData,});
       if (response.ok) {
@@ -23,6 +26,8 @@ document.addEventListener('DOMContentLoaded', function() {
     } catch (error) {
       console.error('Error:', error);
       showMessage('An error occurred. Please try again later.');
+    } finally {
+      loader.style.display = 'none';       // Hide loader after processing
     }
   });
 
