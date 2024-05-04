@@ -1,8 +1,6 @@
 import os
 import sys
-import json
 import pandas as pd
-import numpy as np
 import matplotlib.pyplot as plt
 from sdv.single_table import CTGANSynthesizer
 from sdv.evaluation.single_table import run_diagnostic, evaluate_quality, get_column_plot, get_column_pair_plot
