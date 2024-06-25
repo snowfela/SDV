@@ -18,7 +18,8 @@ To set up the project, follow these steps:
 
 ## Languages Used
 - Python 
-- JavaScript, Node.js
+- JavaScript
+- Node.js
 - HTML 
 - CSS
 
